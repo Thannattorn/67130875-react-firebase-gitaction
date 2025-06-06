@@ -1,8 +1,10 @@
 name: Firebase Deployment
+
 on:
   push:
     branches:
       - main
+
 jobs:
   build:
     name: Build
@@ -10,17 +12,26 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
       - name: Install Dependencies
-        run: npm install      
+        run: npm install
+
       - name: Build
         env:
-          CI: true        
+          CI: true
         run: npm run build
+
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build
           path: build
+
   deploy:
     name: Deploy
     needs: build
@@ -28,11 +39,13 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
+
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: build
           path: build
+
       - name: Deploy to Firebase
         uses: w9jds/firebase-action@master
         with:
